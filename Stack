@@ -1,0 +1,195 @@
+template<typename T>
+ArvBinPesquisa<T>::ArvBinPesquisa()
+:root(nullptr)
+{
+}
+
+template<typename T>
+ArvBinPesquisa<T>::~ArvBinPesquisa()
+{
+    remove(root);
+}
+
+template<typename T>
+void ArvBinPesquisa<T>::remove(Node* node)
+{
+    if(node == nullptr)
+        return;
+
+    remove(node->childs[Node::LEFT]);
+    remove(node->childs[Node::RIGHT]);
+    delete node;
+}
+
+template<typename T>
+void ArvBinPesquisa<T>::inserir(T elem)
+{
+    if(root == nullptr)
+    {
+        root = new Node(elem);
+    }
+    else
+    {
+        Node* currentNode = root;
+        Node* lastNode = nullptr;
+        int index;
+
+        while(currentNode != nullptr)
+        {
+            if(elem < currentNode->elem)
+            {
+                index = Node::LEFT;
+            }
+            else
+            {
+                index = Node::RIGHT;
+            }
+
+            lastNode = currentNode;
+            currentNode = currentNode->childs[index];
+        }
+
+        lastNode->childs[index] = new Node(elem);
+    }
+}
+
+template<typename T>
+void ArvBinPesquisa<T>::excluir(T elem)
+{
+    if(root == nullptr)
+    {
+        return;
+    }
+
+    Node* currentNode = root;
+    Node* lastNode = nullptr;
+    int index;
+
+    while(currentNode != nullptr)
+    {
+        if(elem < currentNode->elem)
+        {
+            index = Node::LEFT;
+        }
+        else
+        {
+            if(currentNode->elem == elem)
+            {
+                break;
+            }
+            index = Node::RIGHT;
+        }
+
+        lastNode = currentNode;
+        currentNode = currentNode->childs[index];
+    }
+
+    if(currentNode == nullptr || currentNode->elem != elem)
+    {
+        return;
+    }
+
+    Node* toRemove = currentNode;
+
+    if(currentNode == root) // Remover o root
+    {
+        root = toRemove->childs[Node::RIGHT];
+
+        Node* ptr = toRemove->childs[Node::RIGHT];
+        Node* lastPtr;
+
+        while(ptr != nullptr)
+        {
+            lastPtr = ptr;
+            ptr = ptr->childs[Node::LEFT];
+        }
+
+        if(lastPtr != nullptr)
+            lastPtr->childs[Node::LEFT] = toRemove->childs[Node::LEFT];
+    }
+    else if(index == Node::LEFT)
+    {
+        lastNode->childs[Node::LEFT] = toRemove->childs[Node::LEFT];
+
+        Node* ptr = toRemove->childs[Node::LEFT];
+        Node* lastPtr;
+
+        while(ptr != nullptr)
+        {
+            lastPtr = ptr;
+            ptr = ptr->childs[Node::RIGHT];
+        }
+
+        if(lastPtr != nullptr)
+            lastPtr->childs[Node::RIGHT] = toRemove->childs[Node::RIGHT];
+    }
+    else
+    {
+        lastNode->childs[Node::RIGHT] = toRemove->childs[Node::RIGHT];
+
+        Node* ptr = toRemove->childs[Node::RIGHT];
+        Node* lastPtr;
+
+        while(ptr != nullptr)
+        {
+            lastPtr = ptr;
+            ptr = ptr->childs[Node::LEFT];
+        }
+
+        if(lastPtr != nullptr)
+            lastPtr->childs[Node::LEFT] = toRemove->childs[Node::LEFT];
+    }
+
+    delete toRemove;
+}
+
+template<typename T>
+std::vector<T> ArvBinPesquisa<T>::travessia()
+{
+    std::vector<T> ordenado;
+
+    acumula(root,ordenado);
+
+    return ordenado;
+}
+
+template<typename T>
+bool ArvBinPesquisa<T>::pesquisar(T elem)
+{
+    Node* currentNode = root;
+    int index;
+
+    while(currentNode != nullptr)
+    {
+        if(currentNode->elem == elem)
+        {
+            return true;
+        }
+
+        if(elem < currentNode->elem)
+        {
+            index = Node::LEFT;
+        }
+        else
+        {
+            index = Node::RIGHT;
+        }
+
+        currentNode = currentNode->childs[index];
+    }
+
+    return false;
+}
+
+template<typename T>
+void ArvBinPesquisa<T>::acumula(Node* node,std::vector<T>& acumulador)
+{
+    if(node == nullptr)
+        return;
+
+    acumula(node->childs[Node::LEFT],acumulador);
+    acumulador.push_back(node->elem);
+    acumula(node->childs[Node::RIGHT],acumulador);
+}
+
+
