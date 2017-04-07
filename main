@@ -1,0 +1,31 @@
+#include "ArvBinPesquisa.hpp"
+#include <iostream>
+
+int main(int argc,const char* argv[])
+{
+    ArvBinPesquisa<int> arvore;
+
+    auto v = {10,5,15,2,7,12,17,1,6,3,4,9,16,18};
+
+    for(auto x : v)
+    {
+        arvore.inserir(x);
+    }
+
+    arvore.excluir(10);
+    arvore.excluir(5);
+    arvore.excluir(17);
+
+    std::vector<int> acumulador = arvore.travessia();
+
+    for(auto x : acumulador)
+    {
+        std::cout << x << " ";
+    }
+
+    std::cout << "\n";
+
+    std::cout << arvore.pesquisar(4);
+
+    return 0;
+}
